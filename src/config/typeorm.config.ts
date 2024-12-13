@@ -10,6 +10,6 @@ export const typeOrmConfig = (
   username: configService.get<string>('PG_USERNAME'),
   password: configService.get<string>('PG_PASSWORD'),
   database: 'taskmanagement',
-  entities: [__dirname + '/../**/*.entity.ts'],
+  entities: [__dirname + '/../**/*.entity.{js,ts}'],
   synchronize: true,
 });
