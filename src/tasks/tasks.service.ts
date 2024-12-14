@@ -4,6 +4,7 @@ import { TaskRepository } from './task.repository';
 import { Task } from './task.entity';
 import { DataSource } from 'typeorm';
 import { TaskStatus } from './task-status.enum';
+import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 
 @Injectable()
 export class TasksService {
@@ -11,23 +12,11 @@ export class TasksService {
   constructor(private readonly dataSource: DataSource) {
     this.taskRepository = TaskRepository(dataSource);
   }
-  // getAllTasks(): Task[] {
-  //   return this.tasks;
-  // }
-  // getFilteredTasks(filterDto: GetTasksFilterDto): Task[] {
-  //   const { status, search } = filterDto;
-  //   let tasks = this.getAllTasks();
-  //   if (status) {
-  //     tasks = tasks.filter((task) => task.status === status);
-  //   }
-  //   if (search) {
-  //     tasks = tasks.filter(
-  //       (task) =>
-  //         task.title.includes(search) || task.description.includes(search),
-  //     );
-  //   }
-  //   return tasks;
-  // }
+
+  async getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
+    return this.taskRepository.getTasks(filterDto);
+  }
+
   async getTaskById(id: number): Promise<Task> {
     const found = await this.taskRepository.findOne({ where: { id } });
     if (!found) {
