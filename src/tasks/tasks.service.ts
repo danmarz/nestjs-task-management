@@ -8,10 +8,9 @@ import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 
 @Injectable()
 export class TasksService {
-  private taskRepository;
-  constructor(private readonly dataSource: DataSource) {
-    this.taskRepository = TaskRepository(dataSource);
-  }
+  constructor(private readonly dataSource: DataSource) {}
+
+  private taskRepository = TaskRepository(this.dataSource);
 
   async getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
     return this.taskRepository.getTasks(filterDto);
