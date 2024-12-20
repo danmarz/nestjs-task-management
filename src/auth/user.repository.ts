@@ -1,5 +1,20 @@
-import { DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-export const UserRepository = (dataSource: DataSource) =>
-  dataSource.getRepository(User).extend({});
+@Injectable()
+export class UserRepository {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
+  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+    const { username, password } = authCredentialsDto;
+
+    const user = this.userRepository.create({ username, password });
+    await this.userRepository.save(user);
+  }
+}
