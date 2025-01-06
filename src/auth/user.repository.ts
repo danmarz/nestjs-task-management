@@ -18,11 +18,11 @@ export class UserRepository {
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
     const { username, password } = authCredentialsDto;
+    const salt = await bcrypt.genSalt();
 
     const user = new User();
     user.username = username;
-    user.salt = await bcrypt.genSalt();
-    user.password = await this.hashPassword(password, user.salt);
+    user.password = await this.hashPassword(password, salt);
 
     try {
       await this.userRepository.save(user);
@@ -37,6 +37,19 @@ export class UserRepository {
   }
 
   private async hashPassword(password: string, salt: string): Promise<string> {
-    return bcrypt.hash(password, salt);
+    return await bcrypt.hash(password, salt);
+  }
+
+  async validateUserPassword(
+    authCredentialsDto: AuthCredentialsDto,
+  ): Promise<string> {
+    const { username, password } = authCredentialsDto;
+    const user = await this.userRepository.findOne({ where: { username } });
+
+    if (user && (await user.validatePassword(password))) {
+      return user.username;
+    } else {
+      return null;
+    }
   }
 }
