@@ -16,6 +16,10 @@ export class UserRepository {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  async findOne(username: string): Promise<User> {
+    return await this.userRepository.findOne({ where: { username } });
+  }
+
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
     const { username, password } = authCredentialsDto;
     const salt = await bcrypt.genSalt();
